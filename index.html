@@ -1,21 +1,180 @@
-<!DOCTYPE html>
+<!-- Look at console -->
 <html>
-	<head>
-		<script src="./jquery-3.4.1.slim.min.js"></script>
-		<script type="text/javascript" src="./app.js"></script>
-	</head>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="/resources/Design/style.css">
+  <link rel="stylesheet" href="/resources/Design/welcome.css">
+  <link rel="stylesheet" href="/resources/Design/login.css">
+  <link rel="stylesheet" href="/resources/Design/Forms.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
-	<body>
-		<div id="score">
-			<label for="lblScore">SCORE:</label>
-			<input id="lblScore" type="text" />
-		</div>
-		<div id="time">
-			<label for="lblTime">TIME:</label>
-			<input id="lblTime" type="text" />
-		</div>
-		<div id="game">
-			<canvas id="canvas" height="600" width="600"></canvas>
-		</div>
-	</body>
+  <div class="up_div"><img src="/resources/logo.png"></div>
+  <script type="text/javascript" src="/resources/Scripts/Validator.js"></script>
+  <script type="text/javascript" src="/resources/Scripts/about.js"></script>
+  <script type="text/javascript" src="/resources/Scripts/Game.js"></script>
+  <title>Pacman Nir and Shahar</title>
+</head>
+<body class="body">
+  <div class="navbar">
+    <a href="#welcome" onclick="show_welcome()">Welcome</a>
+    <a href="#register" onclick="show_Register()">Register</a>
+    <a href="#login" onclick="show_login()">Login</a>
+    <a  id="about_menu" href="#about" onclick="openDialog()">About</a>
+  </div> 
+
+  <div id="game">
+    <table style="width:100%">
+      <tr>
+        <th style="width: 50%;">
+          <button class="button" id="start_game" onclick="Start()">Start game</button>
+          <canvas id="canvas" style="border: 5px solid black;" height="740" width="740"></canvas>
+        </th>
+        <th>
+          <h4 style="color: white;">Player:</h4>
+          <input id="PlayerNameLabel" type="text"/>
+          <h4 style="color: white;">Score:</h4>
+          <input id="lblScore" type="text" />
+          <h4 style="color: white;">TIME Left:</h4>
+          <input id="lblTime" type="text" />
+          <h4 style="color: white;">Lives Left:</h4>
+          <input id="LivesLeft" type="text" />
+          <h4 style="color: white;">Target Score:</h4>
+          <input id="TargetScore" type="text" />
+          <br/>
+        </th>
+      </tr>
+    </table>
+  </div>
+
+  <div id="setting">
+    <h4 style="color: white;">Time:</h4>
+    <input id="TimeFrame" type="text"/>
+    <h4 style="color: white;">Balls:</h4>
+    <input id="Balls" type="text"/>
+    <h4 style="color: white;">Monsters:</h4>
+    <input id="Monsters" type="text"/>
+    <button class="button" id="random_game" onclick="Randomize()">Randomise</button>
+    <button class="button" id="start_game" onclick="Start()">Start game</button>
+  </div>
+
+  <div id="welcome" >
+    <button class="button" onclick="show_login()">Login</button>
+    <button class="button" onclick="show_Register()">Register</button>
+  </div>
+
+  <div id="login_page" class="login_page">
+    <div id="form_page" class="form">
+      <form id="sign_up" class="register_form">
+        <input id="create_username" type="text" placeholder="username"/>
+        <input id="create_password" type="text" placeholder="password"/>
+        <input id="create_email" type="text" placeholder="email address"/>
+        <input id="create_name" type="text" placeholder="Your name"/>
+        <h5 id="namecheck" style="color: red;" >**No special characters or spaces.</h5>
+        <input id="create_date" type="date" name="birthday"/>
+        <h5 id="birthdaycheck" style="color: red;" >**Date is missing</h5>
+
+        <button name="create_button" type="button" id="create_button">create</button>
+        <p class="message">Already registered? <a href="#">Sign In</a></p>
+      </form>
+
+      <form id="sign_in" class="login_form">
+        <input id="login_username" type="text" placeholder="username" name="login_username"/>
+        <input id="login_password" type="text" placeholder="password" name="login_password"/>
+        <button name="login_button" type="button" id="login_button">login</button>
+        <p class="message">Not registered? <a href="#">Create an account</a></p>
+      </form>
+
+    </div>
+  </div>
+
+  <section id="about_dialog" class="web_dialog">
+    <table id="about_table" cellpadding="3" cellspacing="0">
+       <tr id="about_table_header">
+        <td><b>About</b></td>
+        <td>
+         <a href="#" id="aboutBtnClose"><b>X</b></a>
+        </td>
+       </tr>
+       <tr>
+        <td>
+          <div>
+          Nir Cohen - 205597040<br>
+          Shahar Adam - 208447870<br><br>
+          We used Templates for Designed forms,Validate JQuery and buttons<br>
+          We used Validate JQuery plug-in <br>
+          Challenges:<br>
+          - Game design and functions <br>
+          - Using JQuery for validate forms <br>
+          <br>
+          <br>
+          </div>
+       </tr>
+    </table>
+   </section>
+   
+  <script>            
+    document.getElementById("game").style.display = "none";  
+    document.getElementById("namecheck").style.display = "none"; 
+    document.getElementById("setting").style.display = "none";
+    document.getElementById("form_page").style.display = "none"; 
+    document.getElementById("birthdaycheck").style.display = "none"; 
+    document.getElementById("about_dialog").style.display = "none"; 
+  </script>
+
+<script type="text/javascript">
+  function show_login() {
+    document.getElementById("welcome").style.display = "none";
+    document.getElementById("game").style.display = "none";
+    document.getElementById("about_dialog").style.display = "none";
+    document.getElementById("sign_up").style.display = "none";
+    document.getElementById("setting").style.display = "none";
+    document.getElementById("form_page").style.display = "block";
+    document.getElementById("sign_in").style.display = "block";
+    document.getElementById("canvas").style.display = "none";
+  }
+  function show_welcome() {
+    document.getElementById("form_page").style.display = "none";
+    document.getElementById("game").style.display = "none";
+    document.getElementById("about_dialog").style.display = "none";
+    document.getElementById("welcome").style.display = "block";
+    document.getElementById("setting").style.display = "none";
+    document.getElementById("canvas").style.display = "none";
+  }
+  function show_Register() {
+    document.getElementById("welcome").style.display = "none";
+    document.getElementById("form_page").style.display = "none";
+    document.getElementById("game").style.display = "none";
+    document.getElementById("about_dialog").style.display = "none";
+    document.getElementById("canvas").style.display = "none";
+    document.getElementById("setting").style.display = "none";
+    document.getElementById("sign_in").style.display = "none";
+    document.getElementById("form_page").style.display = "block";
+    document.getElementById("sign_up").style.display = "block";
+  }
+
+  function show_Setting() {
+    document.getElementById("form_page").style.display = "none";
+    document.getElementById("game").style.display = "none";
+    document.getElementById("about_dialog").style.display = "none";
+    document.getElementById("welcome").style.display = "none";
+    document.getElementById("canvas").style.display = "none";
+    document.getElementById("setting").style.display = "block";
+
+  }
+  function show_game() {
+		document.getElementById("welcome").style.display = "none";
+		document.getElementById("form_page").style.display = "none";
+		document.getElementById("about_dialog").style.display = "none";
+    document.getElementById("setting").style.display = "none";
+
+		document.getElementById("game").style.display = "block";
+	}
+
+</script>
+
+  <footer>
+    <span id="Contact">2022 © Nir Cohen and Shahar Adam </span>
+    <div> Contact us: adamsha@post.bgu.ac.il nirai@post.bgu.ac.il</div>
+  </footer>
+</body>
 </html>

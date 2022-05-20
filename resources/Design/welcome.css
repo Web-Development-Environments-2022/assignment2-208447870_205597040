@@ -1,0 +1,14 @@
+.body{
+    background-attachment:fixed;
+    background-size: 100%;  
+    background-image:url('/back2.gif');
+    background-repeat: no-repeat; 
+
+
+    position: relative; 
+
+    background-size: cover;
+  /* background-position: center; */
+    
+  
+} 
