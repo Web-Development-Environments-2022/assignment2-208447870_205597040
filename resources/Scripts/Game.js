@@ -230,7 +230,6 @@ function PutPillsOnMap(){
     board[emptyCell[0]][emptyCell[1]]=11; //pill
     m_PillPrevPosition.i = emptyCell[0];
     m_PillPrevPosition.j = emptyCell[1];
-    console.log("Putting Pill on "+emptyCell[0]+","+emptyCell[1]);
     var pillTimeout = setTimeout(()=> {
         console.log("Clearing Pill from "+m_PillPrevPosition.i+","+m_PillPrevPosition.j);
         board[m_PillPrevPosition.i][m_PillPrevPosition.j]=0; //pill
@@ -364,42 +363,42 @@ function Draw() {
             //draw Ghost1
             else if (board[i][j] === 3) {
                 var base_image = new Image();
-                base_image.src = '/resources/images/ghost1.png';
+                base_image.src = 'resources/Images/ghost1.png';
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Wall
             else if (board[i][j] === 4 ) {
 
                 base_image = new Image();
-                base_image.src = '/resources/images/wall7.png';
+                base_image.src = 'resources/Images/wall7.png';
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost2
             else if (board[i][j] === 5 && m_GhostNum > 1) {
                 base_image = new Image();
-                base_image.src = '/resources/images/ghost2.png';
+                base_image.src = 'resources/Images/ghost2.png';
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost3
             else if (board[i][j] === 6 && m_GhostNum > 2) {
                 base_image = new Image();
-                base_image.src = '/resources/images/ghost3.png';
+                base_image.src = 'resources/Images/ghost3.png';
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost4
             else if (board[i][j] === 10 && m_GhostNum > 3) {
                 base_image = new Image();
-                base_image.src = '/resources/images/ghost4.png';
+                base_image.src = 'resources/Images/ghost4.png';
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             else if (board[i][j] === 11) {
                 base_image = new Image();
-                base_image.src = '/resources/images/Pill.jpg';
+                base_image.src = 'resources/Images/Pill.jpg';
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             else if (board[i][j] === 12) {
                 base_image = new Image();
-                    base_image.src = '/resources/images/ClockPeterPan.jpg';
+                    base_image.src = 'resources/Images/ClockPeterPan.jpg';
                     context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             
