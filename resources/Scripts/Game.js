@@ -62,8 +62,9 @@ var m_GameWon = false;
 var m_GameOver = false;
 
 function Start() {
+    loserAudio.pause();
     show_game();
-
+    startAudio.play();
     board = [
         [4, 4, 4, 4, 4, 4, 4, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4],
         [4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4],
@@ -224,9 +225,7 @@ function findRandomEmptyCell(board) {
 }
 
 function PutPillsOnMap(){
-    // if(m_PillPrevPosition.i != 500){
-        // board[m_PillPrevPosition.i][m_PillPrevPosition.j]=0;
-    // }
+
     emptyCell = findRandomEmptyCell(board);
     board[emptyCell[0]][emptyCell[1]]=11; //pill
     m_PillPrevPosition.i = emptyCell[0];
@@ -237,7 +236,6 @@ function PutPillsOnMap(){
         board[m_PillPrevPosition.i][m_PillPrevPosition.j]=0; //pill
         m_PillPrevPosition.i = -1;
         m_PillPrevPosition.j = -1;
-        // clearTimeout(pillTimeout);
     }, 5000);
 }
 
@@ -530,7 +528,7 @@ function UpdatePosition() {
             window.clearInterval(intervalPill);
             window.alert("Loser!!!");
             m_GameOver = true;
-            playMusic();
+            loserAudio.play();
             document.getElementById("canvas").style.display = "none";
             document.getElementById("start_game").style.display = "block";
         }
