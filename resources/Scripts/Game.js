@@ -363,7 +363,7 @@ function Draw() {
             //draw Ghost1
             else if (board[i][j] === 3) {
                 var base_image = new Image();
-                base_image.src = "resources/Images/ghost1.png";
+                base_image.src = "resources/ghost1.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Wall
