@@ -52,7 +52,7 @@ var m_StartTime;
 var time_elapsed;
 var interval;
 var loginUsernameEntry = $("#login_username").val();
-var m_PlayerName = loginUsernameEntry;
+var m_PlayerName;
 
 //scores for each ball
 var m_FirstBallScore = 5;
@@ -64,6 +64,7 @@ var m_GameWon = false;
 var m_GameOver = false;
 
 function Start() {
+    m_PlayerName = loginUsernameEntry;
     loserAudio.pause();
     show_game();
     startAudio.play();
