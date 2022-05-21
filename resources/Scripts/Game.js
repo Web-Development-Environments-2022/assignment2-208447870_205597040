@@ -2,6 +2,8 @@ var startAudio = new Audio("resources/Audio/Intro.mp3");
 var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
 var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
 var winAudio = new Audio("resources/Audio/WIN sound.mp3");
+var monsterAudio = new Audio("resources/Audio/OUCH Monster.mp3");
+
 $(document).ready(function() {
     context = canvas.getContext("2d");
 })
@@ -16,12 +18,15 @@ var intervalGhosts;
 var intervalPill;
 var m_TargetScore = 0;
 
+var Monster = new Object();
 var m_PillPrevPosition=new Object(); //curernt Position of Pill
 var m_ClockPrevPosition=new Object(); //curernt Position of Clock
 m_PillPrevPosition.i = 500;
 m_PillPrevPosition.j = 500;
 m_ClockPrevPosition.i = 600;
 m_ClockPrevPosition.j = 600;
+Monster.i = 800;
+Monster.j = 800;
 
 
 var board;
@@ -61,7 +66,6 @@ var m_GameOver = false;
 
 function Start() {
     m_PlayerName = loginUsernameEntry;
-
     loserAudio.pause();
     show_game();
     startAudio.play();
@@ -207,6 +211,7 @@ function Start() {
     intervalGame = setInterval(UpdatePosition, 150);
     intervalGhosts = setInterval(UpdatePositionGhosts, 600);
     intervalPill = setInterval(PutPillsOnMap, 10000);
+    intervalPill = setInterval(PutMonsterOnMap, 10000);
     intervalClock = setInterval(PutClockOnMap, 16000);
 }
 
@@ -231,13 +236,23 @@ function PutPillsOnMap(){
     m_PillPrevPosition.i = emptyCell[0];
     m_PillPrevPosition.j = emptyCell[1];
     var pillTimeout = setTimeout(()=> {
-        console.log("Clearing Pill from "+m_PillPrevPosition.i+","+m_PillPrevPosition.j);
         board[m_PillPrevPosition.i][m_PillPrevPosition.j]=0; //pill
         m_PillPrevPosition.i = -1;
         m_PillPrevPosition.j = -1;
     }, 5000);
 }
+function PutMonsterOnMap(){
 
+    emptyCell = findRandomEmptyCell(board);
+    board[emptyCell[0]][emptyCell[1]]=13; //monster
+    Monster.i = emptyCell[0];
+    Monster.j = emptyCell[1];
+    var pillTimeout = setTimeout(()=> {
+        board[Monster.i][Monster.j]=0; //monster
+        Monster.i = -1;
+        Monster.j = -1;
+    }, 5000);
+}
 function PutClockOnMap(){
     if(m_ClockPrevPosition.i != 600){
         board[m_ClockPrevPosition.i][m_ClockPrevPosition.j]=0;
@@ -371,7 +386,7 @@ function Draw() {
             else if (board[i][j] === 4 ) {
 
                 base_image = new Image();
-                base_image.src = "resources/Images/wall7.png";
+                base_image.src = "resources/images/wall7.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost2
@@ -400,6 +415,11 @@ function Draw() {
             else if (board[i][j] === 12) {
                 base_image = new Image();
                 base_image.src = "resources/Images/ClockPeterPan.jpg";
+                context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
+            }
+            else if (board[i][j] === 13) {
+                base_image = new Image();
+                base_image.src = "resources/Images/monster.jpg";
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             
@@ -480,20 +500,32 @@ function UpdatePosition() {
         m_PillPrevPosition.j=-1;
     }
 
+    
+
     if(m_PacmanPosition.i === m_ClockPrevPosition.i && m_PacmanPosition.j === m_ClockPrevPosition.j){
         m_MaxTime=m_MaxTime+10;
         m_ClockPrevPosition.i=-1;
         m_ClockPrevPosition.j=-1;
     }
 
-    if ((m_PacmanPosition.i === FirstGhostPosition.i && m_PacmanPosition.j === FirstGhostPosition.j) || (m_PacmanPosition.i === SecondGhostPosition.i && m_PacmanPosition.j === SecondGhostPosition.j) || ((m_PacmanPosition.i == ThirdGhostPosition.i && m_PacmanPosition.j == ThirdGhostPosition.j) || ((m_PacmanPosition.i == FourthGhostPosition.i && m_PacmanPosition.j == FourthGhostPosition.j)))) {
-        hurtAudio.play();
+    if ((m_PacmanPosition.i === Monster.i && m_PacmanPosition.j === Monster.j) ||(m_PacmanPosition.i === FirstGhostPosition.i && m_PacmanPosition.j === FirstGhostPosition.j) || (m_PacmanPosition.i === SecondGhostPosition.i && m_PacmanPosition.j === SecondGhostPosition.j) || ((m_PacmanPosition.i == ThirdGhostPosition.i && m_PacmanPosition.j == ThirdGhostPosition.j) || ((m_PacmanPosition.i == FourthGhostPosition.i && m_PacmanPosition.j == FourthGhostPosition.j)))) {
+        
+        if(m_PacmanPosition.i === Monster.i && m_PacmanPosition.j === Monster.j){
+            m_livesUser--;
+            monsterAudio.play();
+        }    
+        else{
+            hurtAudio.play();
+        }
+        Monster.i=-1;
+        Monster.j=-1;
+
         board[m_PacmanPosition.i][m_PacmanPosition.j] = 0;
         board[FirstGhostPosition.i][FirstGhostPosition.j] = FirstGhostPosition.prev;
         FirstGhostPosition.i = 1;
         FirstGhostPosition.j = 1;
-        board[FirstGhostPosition.i][FirstGhostPosition.j] = 3;
         
+        board[FirstGhostPosition.i][FirstGhostPosition.j] = 3;
         FirstGhostPosition.prev = 0;
 
         if(m_GhostNum > 1){
