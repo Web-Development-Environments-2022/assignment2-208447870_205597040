@@ -419,7 +419,7 @@ function Draw() {
             }
             else if (board[i][j] === 13) {
                 base_image = new Image();
-                base_image.src = "resources/Images/monster.jpg";
+                base_image.src = "resources/Images/monster.gif";
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             
