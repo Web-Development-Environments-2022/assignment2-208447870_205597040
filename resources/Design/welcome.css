@@ -7,3 +7,7 @@
 
     background-size: cover; 
 } 
+.stop-scrolling {
+    height: 100%;
+    overflow: hidden;
+  }
