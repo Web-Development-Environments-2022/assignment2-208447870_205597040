@@ -390,7 +390,7 @@ function Draw() {
             else if (board[i][j] === 4 ) {
 
                 base_image = new Image();
-                base_image.src = "resources/images/wall7.png";
+                base_image.src = "resources/wall7.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost2
