@@ -474,7 +474,11 @@ function UpdatePosition() {
     var currentTime=new Date();
     time_elapsed=(currentTime-start_time)/1000;
 
-    
+    if(m_PacmanPosition.i === m_PillPrevPosition.i && m_PacmanPosition.j === m_PillPrevPosition.j){
+        m_livesUser++;
+        m_PacmanPosition.i=-1;
+        m_PacmanPosition.j=-1;
+    }
 
     if ((m_PacmanPosition.i === FirstGhostPosition.i && m_PacmanPosition.j === FirstGhostPosition.j) || (m_PacmanPosition.i === SecondGhostPosition.i && m_PacmanPosition.j === SecondGhostPosition.j) || ((m_PacmanPosition.i == ThirdGhostPosition.i && m_PacmanPosition.j == ThirdGhostPosition.j) || ((m_PacmanPosition.i == FourthGhostPosition.i && m_PacmanPosition.j == FourthGhostPosition.j)))) {
         hurtAudio.play();
