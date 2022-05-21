@@ -1,6 +1,8 @@
 var startAudio = new Audio("resources/Audio/Intro.mp3");
 var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
 var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
+var winAudio = new Audio("resources/Audio/WIN sound.mp3");
+
 
 
 $(document).ready(function() {
@@ -540,7 +542,7 @@ function UpdatePosition() {
         window.alert("Winner!!!");
         m_GameWon = true;
         m_TargetScore = 0;
-        playMusic();
+        winAudio.play();
         document.getElementById("canvas").style.display = "none";
         document.getElementById("start_game").style.display = "block";
     }
