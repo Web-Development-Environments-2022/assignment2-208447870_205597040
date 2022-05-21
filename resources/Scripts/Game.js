@@ -1,6 +1,6 @@
-var startAudio = new Audio("resources/Audio/Intro.mp3");
-var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
-var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
+var startAudio = new Audio("resources/audio/Intro.mp3");
+var loserAudio = new Audio("resources/audio/Naruto sadness and sorrow.mp3");
+var hurtAudio = new Audio("resources/audio/Ow_Sound.mp3");
 
 
 $(document).ready(function() {
