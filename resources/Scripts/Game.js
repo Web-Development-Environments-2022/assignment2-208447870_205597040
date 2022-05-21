@@ -93,7 +93,7 @@ function Start() {
     ]
     document.getElementById("start_game").style.display = "none";
     document.getElementById("head_logo").style.display = "none";
-    
+
     document.getElementById("canvas").style.display = "block";
     m_GameScore = 0;
     m_TimesCatched = 0
@@ -396,34 +396,34 @@ function Draw() {
             //draw Ghost2
             else if (board[i][j] === 5 && m_GhostNum > 1) {
                 base_image = new Image();
-                base_image.src = "resources/Images/ghost2.png";
+                base_image.src = "resources/images/ghost2.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost3
             else if (board[i][j] === 6 && m_GhostNum > 2) {
                 base_image = new Image();
-                base_image.src = "resources/Images/ghost3.png";
+                base_image.src = "resources/images/ghost3.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost4
             else if (board[i][j] === 10 && m_GhostNum > 3) {
                 base_image = new Image();
-                base_image.src = "resources/Images/ghost4.png";
+                base_image.src = "resources/images/ghost4.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             else if (board[i][j] === 11) {
                 base_image = new Image();
-                base_image.src = "resources/Images/Pill.jpg";
+                base_image.src = "resources/images/Pill.jpg";
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             else if (board[i][j] === 12) {
                 base_image = new Image();
-                base_image.src = "resources/Images/ClockPeterPan.jpg";
+                base_image.src = "resources/images/ClockPeterPan.jpg";
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             else if (board[i][j] === 13) {
                 base_image = new Image();
-                base_image.src = "resources/Images/monster.jpg";
+                base_image.src = "resources/images/monster.jpg";
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             
