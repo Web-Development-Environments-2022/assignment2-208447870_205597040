@@ -51,7 +51,6 @@ var m_PacColor="yellow";
 var m_StartTime;
 var time_elapsed;
 var interval;
-var loginUsernameEntry = $("#login_username").val();
 var m_PlayerName;
 
 //scores for each ball
