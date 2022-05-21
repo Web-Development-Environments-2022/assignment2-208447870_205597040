@@ -7,13 +7,14 @@ const data_base = [
         dateOfBirth: "16-05-2022"
 	}
 ];
+var loginUsernameEntry;
 
 // Look at console
 $(document).ready(function() {
 	var Exist;
   
 	$('#login_button').on('click', function() {
-		var loginUsernameEntry = $("#login_username").val();
+		loginUsernameEntry = $("#login_username").val();
 		var loginPasswordEntry = $("#login_password").val();
 		for(let i=0; i<data_base.length ;i++){
             let user = data_base[i];
