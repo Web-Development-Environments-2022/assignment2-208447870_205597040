@@ -280,12 +280,12 @@ function getRandomIntInclusive(min, max) {
 
 function Draw() {
     canvas.width=canvas.width; //clean board
-    lblScore.value = score;
-    lblTime.value = time_elapsed;
+    document.getElementById("lblScore").value = score;
+    document.getElementById("lblTime").value = time_elapsed;
     
-    LivesLeft.value = m_livesUser;
-    PlayerNameLabel.value = m_PlayerName;
-    TargetScore.value = m_TargetScore;
+    document.getElementById("LivesLeft").value = m_livesUser;
+    document.getElementById("PlayerNameLabel").value = m_PlayerName;
+    document.getElementById("TargetScore").value = m_TargetScore;
 
     context.fillStyle = "black";
     context.fillRect(0, 0, canvas.width, canvas.height);
