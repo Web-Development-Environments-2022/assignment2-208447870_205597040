@@ -8,7 +8,6 @@ const data_base = [
 	}
 ];
 var loginUsernameEntry;
-
 // Look at console
 $(document).ready(function() {
 	var Exist;
