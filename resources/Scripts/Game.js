@@ -2,9 +2,6 @@ var startAudio = new Audio("resources/Audio/Intro.mp3");
 var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
 var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
 var winAudio = new Audio("resources/Audio/WIN sound.mp3");
-
-
-
 $(document).ready(function() {
     context = canvas.getContext("2d");
 })
@@ -64,6 +61,7 @@ var m_GameOver = false;
 
 function Start() {
     m_PlayerName = loginUsernameEntry;
+
     loserAudio.pause();
     show_game();
     startAudio.play();
