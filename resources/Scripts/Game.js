@@ -282,7 +282,7 @@ function Draw() {
     canvas.width=canvas.width; //clean board
     
     lblScore.value = m_GameScore;
-    lblTime.value = time_elapsed;
+    lblTime.value = m_MaxTime-time_elapsed;
     
     LivesLeft.value = m_livesUser;
     PlayerNameLabel.value = m_PlayerName;
@@ -399,8 +399,8 @@ function Draw() {
             }
             else if (board[i][j] === 12) {
                 base_image = new Image();
-                    base_image.src = "resources/Images/ClockPeterPan.jpg";
-                    context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
+                base_image.src = "resources/Images/ClockPeterPan.jpg";
+                context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             
         }
@@ -476,8 +476,14 @@ function UpdatePosition() {
 
     if(m_PacmanPosition.i === m_PillPrevPosition.i && m_PacmanPosition.j === m_PillPrevPosition.j){
         m_livesUser++;
-        m_PacmanPosition.i=-1;
-        m_PacmanPosition.j=-1;
+        m_PillPrevPosition.i=-1;
+        m_PillPrevPosition.j=-1;
+    }
+
+    if(m_PacmanPosition.i === m_ClockPrevPosition.i && m_PacmanPosition.j === m_ClockPrevPosition.j){
+        m_MaxTime=m_MaxTime+10;
+        m_ClockPrevPosition.i=-1;
+        m_ClockPrevPosition.j=-1;
     }
 
     if ((m_PacmanPosition.i === FirstGhostPosition.i && m_PacmanPosition.j === FirstGhostPosition.j) || (m_PacmanPosition.i === SecondGhostPosition.i && m_PacmanPosition.j === SecondGhostPosition.j) || ((m_PacmanPosition.i == ThirdGhostPosition.i && m_PacmanPosition.j == ThirdGhostPosition.j) || ((m_PacmanPosition.i == FourthGhostPosition.i && m_PacmanPosition.j == FourthGhostPosition.j)))) {
@@ -551,23 +557,6 @@ function UpdatePosition() {
     }
     else{
         Draw();
-    }
-}
-
-function playMusic(sound_num) {
-    if (sound_num === 1) {
-        var dbgt_audio = document.getElementById("DBGT");
-        dbgt_audio.play();
-    }
-    if (sound_num === 2) {
-        dbgt_audio.pause();
-        var GameOverAudio = document.getElementById("GameOver");
-        GameOverAudio.play();
-    }
-    if (sound_num === 3) {
-        dbgt_audio.pause();
-        var GameWonAudio = document.getElementById("GameWon");
-        GameWonAudio.play();
     }
 }
 
