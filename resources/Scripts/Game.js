@@ -65,6 +65,8 @@ var m_GameWon = false;
 var m_GameOver = false;
 
 function Start() {
+    $('body').addClass('stop-scrolling')
+
     m_PlayerName = loginUsernameEntry;
     loserAudio.pause();
     show_game();
@@ -90,6 +92,8 @@ function Start() {
         [4, 4, 4, 4, 4, 4, 4, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4]
     ]
     document.getElementById("start_game").style.display = "none";
+    document.getElementById("head_logo").style.display = "none";
+    
     document.getElementById("canvas").style.display = "block";
     m_GameScore = 0;
     m_TimesCatched = 0
