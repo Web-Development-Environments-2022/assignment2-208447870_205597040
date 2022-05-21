@@ -282,7 +282,8 @@ function getRandomIntInclusive(min, max) {
 
 function Draw() {
     canvas.width=canvas.width; //clean board
-    lblScore.value = score;
+    
+    lblScore.value = m_GameScore;
     lblTime.value = time_elapsed;
     
     LivesLeft.value = m_livesUser;
