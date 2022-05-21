@@ -1,9 +1,12 @@
-var startAudio = new Audio("resources/audio/Intro.mp3");
-var loserAudio = new Audio("resources/audio/Naruto sadness and sorrow.mp3");
-var hurtAudio = new Audio("resources/audio/Ow_Sound.mp3");
+var startAudio = new Audio("resources/Audio/Intro.mp3");
+var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
+var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
+
+
 $(document).ready(function() {
     context = canvas.getContext("2d");
 })
+
 var context;// = canvas.getContext("2d");
 var score;
 var start_time;
@@ -13,18 +16,22 @@ var intervalGame;
 var intervalGhosts;
 var intervalPill;
 var m_TargetScore = 0;
+
 var m_PillPrevPosition=new Object(); //curernt Position of Pill
 var m_ClockPrevPosition=new Object(); //curernt Position of Clock
 m_PillPrevPosition.i = 500;
 m_PillPrevPosition.j = 500;
 m_ClockPrevPosition.i = 600;
 m_ClockPrevPosition.j = 600;
+
+
 var board;
 //random
 var m_GhostNum = 4;
 var m_TotalBalls;
 var m_MaxTime = 180;
 var m_PacDirection = 4;
+
 var m_PacmanPosition = new Object();
 var FirstGhostPosition = new Object(); //Position of First Ghost
 var SecondGhostPosition = new Object(); //Position of Second Ghost
@@ -33,6 +40,7 @@ var FourthGhostPosition = new Object(); //Position of Fourth Ghost
 var bonus_pos = new Object();
 var special_pos = new Object();
 var m_special;
+
 var m_livesUser;
 var m_TimesCatched;
 var board;
@@ -43,13 +51,16 @@ var time_elapsed;
 var interval;
 var loginUsernameEntry = $("#login_username").val();
 var m_PlayerName = loginUsernameEntry;
+
 //scores for each ball
 var m_FirstBallScore = 5;
 var m_SecondBallScore = 15;
 var m_ThirdBallScore = 25;
+
 //has the game been completed
 var m_GameWon = false;
 var m_GameOver = false;
+
 function Start() {
     loserAudio.pause();
     show_game();
@@ -85,6 +96,7 @@ function Start() {
     m_livesUser = 5;
     m_StartTime = new Date();
     m_special = 1;
+
     //Ghosts start in corners
     FirstGhostPosition.i = 1;
     FirstGhostPosition.j = 1;
@@ -112,9 +124,11 @@ function Start() {
         FourthGhostPosition.num = 10;
         board[1][16] = 10;
     }
+
     //important
     m_PacmanPosition.i=11;
     m_PacmanPosition.j=11;
+
     tempRed = Math.floor(0.6 * food_remain);
     tempGreen = Math.floor(0.3 * food_remain);
     tempDragon = Math.floor(0.1 * food_remain);
@@ -125,6 +139,7 @@ function Start() {
     var cnt = 289;
     var pacman_remain = 1;
     start_time= new Date();
+
     for (var i = 0; i < 18; i++) { //18 is the number of rows and columns
         for (var j = 0; j < 18; j++) {
             if (board[i][j] !== 0) {
@@ -180,6 +195,7 @@ function Start() {
         }
         food_remain--;
     }
+
     keysDown = {};
     addEventListener("keydown", function (e) {
         keysDown[e.keyCode] = true;
@@ -187,11 +203,13 @@ function Start() {
     addEventListener("keyup", function (e) {
         keysDown[e.keyCode] = false;
     }, false);
+
     intervalGame = setInterval(UpdatePosition, 150);
     intervalGhosts = setInterval(UpdatePositionGhosts, 600);
     intervalPill = setInterval(PutPillsOnMap, 10000);
     intervalClock = setInterval(PutClockOnMap, 16000);
 }
+
 function findRandomEmptyCell(board) {
     var i = Math.floor((Math.random() * 17) + 1);
     var j = Math.floor((Math.random() * 17) + 1);
@@ -205,7 +223,9 @@ function findRandomEmptyCell(board) {
     }
     return [i, j];
 }
+
 function PutPillsOnMap(){
+
     emptyCell = findRandomEmptyCell(board);
     board[emptyCell[0]][emptyCell[1]]=11; //pill
     m_PillPrevPosition.i = emptyCell[0];
@@ -217,6 +237,7 @@ function PutPillsOnMap(){
         m_PillPrevPosition.j = -1;
     }, 5000);
 }
+
 function PutClockOnMap(){
     if(m_ClockPrevPosition.i != 600){
         board[m_ClockPrevPosition.i][m_ClockPrevPosition.j]=0;
@@ -226,6 +247,7 @@ function PutClockOnMap(){
     m_ClockPrevPosition.i = emptyCell[0];
     m_ClockPrevPosition.j = emptyCell[1];
 }
+
 function GetKeyPressed() {
     if (keysDown[38]) {
         return 1;
@@ -249,11 +271,13 @@ function Randomize() {
     document.getElementById("Balls").value = m_TotalBalls;
     document.getElementById("Monsters").value = m_GhostNum;
 }
+
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
 }
+
 function Draw() {
     canvas.width=canvas.width; //clean board
     lblScore.value = score;
@@ -262,6 +286,7 @@ function Draw() {
     LivesLeft.value = m_livesUser;
     PlayerNameLabel.value = m_PlayerName;
     TargetScore.value = m_TargetScore;
+
     context.fillStyle = "black";
     context.fillRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < 18; i++) {
@@ -339,47 +364,48 @@ function Draw() {
             else if (board[i][j] === 3) {
                 var base_image = new Image();
                 base_image.src = "resources/ghost1.png";
-                base_image.src = "resources/images/ghost1.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Wall
             else if (board[i][j] === 4 ) {
+
                 base_image = new Image();
-                base_image.src = "resources/images/wall7.png";
+                base_image.src = "resources/Images/wall7.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost2
             else if (board[i][j] === 5 && m_GhostNum > 1) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost2.png";
+                base_image.src = "resources/Images/ghost2.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost3
             else if (board[i][j] === 6 && m_GhostNum > 2) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost3.png";
+                base_image.src = "resources/Images/ghost3.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost4
             else if (board[i][j] === 10 && m_GhostNum > 3) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost4.png";
+                base_image.src = "resources/Images/ghost4.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             else if (board[i][j] === 11) {
                 base_image = new Image();
-                base_image.src = "resources/images/Pill.jpg";
+                base_image.src = "resources/Images/Pill.jpg";
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             else if (board[i][j] === 12) {
                 base_image = new Image();
-                    base_image.src = "resources/images/ClockPeterPan.jpg";
+                    base_image.src = "resources/Images/ClockPeterPan.jpg";
                     context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             
         }
     }        
 }
+
 function UpdatePositionGhosts() {
     //Ghost1: 3, Ghost2:5, Ghost3:6, Ghost4:10
     if (m_GhostNum === 1) {
@@ -401,6 +427,7 @@ function UpdatePositionGhosts() {
         GhostMovement(FourthGhostPosition);
     }
 }
+
 function UpdatePosition() {
     board[m_PacmanPosition.i][m_PacmanPosition.j]=0;
     var x = GetKeyPressed()
@@ -442,9 +469,12 @@ function UpdatePosition() {
         m_GameScore = m_GameScore + m_ThirdBallScore;
     }
     board[m_PacmanPosition.i][m_PacmanPosition.j]=2;
+
     var currentTime=new Date();
     time_elapsed=(currentTime-start_time)/1000;
+
     
+
     if ((m_PacmanPosition.i === FirstGhostPosition.i && m_PacmanPosition.j === FirstGhostPosition.j) || (m_PacmanPosition.i === SecondGhostPosition.i && m_PacmanPosition.j === SecondGhostPosition.j) || ((m_PacmanPosition.i == ThirdGhostPosition.i && m_PacmanPosition.j == ThirdGhostPosition.j) || ((m_PacmanPosition.i == FourthGhostPosition.i && m_PacmanPosition.j == FourthGhostPosition.j)))) {
         hurtAudio.play();
         board[m_PacmanPosition.i][m_PacmanPosition.j] = 0;
@@ -454,6 +484,7 @@ function UpdatePosition() {
         board[FirstGhostPosition.i][FirstGhostPosition.j] = 3;
         
         FirstGhostPosition.prev = 0;
+
         if(m_GhostNum > 1){
             SecondGhostPosition.prev = 0;
             board[SecondGhostPosition.i][SecondGhostPosition.j] = SecondGhostPosition.prev;
@@ -477,6 +508,7 @@ function UpdatePosition() {
             FourthGhostPosition.j = 16;
             board[FourthGhostPosition.i][FourthGhostPosition.j] = 10;
         }
+
         m_GameScore -= 10;
         m_TargetScore -= 10;
         m_TimesCatched++;
@@ -516,6 +548,7 @@ function UpdatePosition() {
         Draw();
     }
 }
+
 function playMusic(sound_num) {
     if (sound_num === 1) {
         var dbgt_audio = document.getElementById("DBGT");
@@ -532,6 +565,7 @@ function playMusic(sound_num) {
         GameWonAudio.play();
     }
 }
+
 function GhostMovement(GhostPosition) {
     //anyway
     board[GhostPosition.i][GhostPosition.j] = GhostPosition.prev;
