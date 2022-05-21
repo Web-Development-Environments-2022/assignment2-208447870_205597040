@@ -1,6 +1,6 @@
-var startAudio = new Audio("resources/audio/Intro.mp3");
-var loserAudio = new Audio("resources/audio/Naruto sadness and sorrow.mp3");
-var hurtAudio = new Audio("resources/audio/Ow_Sound.mp3");
+var startAudio = new Audio("resources/Audio/Intro.mp3");
+var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
+var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
 
 
 $(document).ready(function() {
@@ -280,12 +280,12 @@ function getRandomIntInclusive(min, max) {
 
 function Draw() {
     canvas.width=canvas.width; //clean board
-    document.getElementById("lblScore").value = score;
-    document.getElementById("lblTime").value = time_elapsed;
+    lblScore.value = score;
+    lblTime.value = time_elapsed;
     
-    document.getElementById("LivesLeft").value = m_livesUser;
-    document.getElementById("PlayerNameLabel").value = m_PlayerName;
-    document.getElementById("TargetScore").value = m_TargetScore;
+    LivesLeft.value = m_livesUser;
+    PlayerNameLabel.value = m_PlayerName;
+    TargetScore.value = m_TargetScore;
 
     context.fillStyle = "black";
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -363,42 +363,42 @@ function Draw() {
             //draw Ghost1
             else if (board[i][j] === 3) {
                 var base_image = new Image();
-                base_image.src = "resources/images/ghost1.png";
+                base_image.src = "resources/ghost1.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Wall
             else if (board[i][j] === 4 ) {
 
                 base_image = new Image();
-                base_image.src = "resources/images/wall7.png";
+                base_image.src = "resources/Images/wall7.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost2
-            else if (board[i][j] == 5 && m_GhostNum > 1) {
+            else if (board[i][j] === 5 && m_GhostNum > 1) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost2.png";
+                base_image.src = "resources/Images/ghost2.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost3
-            else if (board[i][j] == 6 && m_GhostNum > 2) {
+            else if (board[i][j] === 6 && m_GhostNum > 2) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost3.png";
+                base_image.src = "resources/Images/ghost3.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost4
             else if (board[i][j] === 10 && m_GhostNum > 3) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost4.png";
+                base_image.src = "resources/Images/ghost4.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             else if (board[i][j] === 11) {
                 base_image = new Image();
-                base_image.src = "resources/images/Pill.jpg";
+                base_image.src = "resources/Images/Pill.jpg";
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             else if (board[i][j] === 12) {
                 base_image = new Image();
-                    base_image.src = "resources/images/ClockPeterPan.jpg";
+                    base_image.src = "resources/Images/ClockPeterPan.jpg";
                     context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             
