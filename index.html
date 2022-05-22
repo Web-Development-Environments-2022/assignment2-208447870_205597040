@@ -46,16 +46,41 @@
     </table>
   </div>
 
-  <div id="setting">
-    <h4 style="color: white;">Time:</h4>
-    <input id="TimeFrame" type="text"/>
-    <h4 style="color: white;">Balls:</h4>
-    <input id="Balls" type="text"/>
-    <h4 style="color: white;">Monsters:</h4>
-    <input id="Monsters" type="text"/>
-    <button class="button" id="random_game" onclick="Randomize()">Randomise</button>
-    <button class="button" id="start_game" onclick="Start()">Start game</button>
-  </div>
+  <div id="setting" class="settings">
+    <table style="width:100%; background-color: rgb(66, 61, 48);">
+      <tr>
+        <th><tr><img src="resources/Images/keys.png" style="width: 100%;"></tr></th><br/><br/>
+      </tr>
+      <th>
+        <tr>
+          <th><br/><input type="number" id="n_Balls" name="n_Balls" required></th>
+          <th><br/><label>Number of Balls</label></th>
+        </tr>
+        <tr>
+          <th><img src="resources/Images/RedBall.png" style="width: 10%;"></th>
+          <th><label>5 points Ball</label></th>
+        </tr>
+        <tr>
+          <th><img src="resources/Images/GreenBall.png" style="width: 10%;"></th>
+          <th><label>15 points Ball</label></th>
+        </tr>
+        <tr>
+          <th><img src="resources/Images/Dragonball.png" style="width: 10%;"></th>
+          <th><label>25 points Ball</label></th>
+        </tr>
+        <tr>
+          <th><input type="number" id="gameTime" name="gameTime" required></th>
+          <th><label>Game Time</label></th>
+        </tr>
+        <tr>
+          <th><input type="number" id="n_Monsters" name="n_Monsters" required></th>
+          <th><label>Num of Monsters</label></th>
+        </tr>
+      </th>
+    </table>
+    <button style="background-color: coral;" id="random_game" onclick="Randomize()">Randomise</button>
+    <button style="background-color: coral;" id="start_game_settings" onclick="Start()">Start game</button>
+</div>
 
   <div id="welcome" >
     <button class="button" onclick="show_login()">Login</button>
@@ -119,9 +144,16 @@
     document.getElementById("form_page").style.display = "none"; 
     document.getElementById("birthdaycheck").style.display = "none"; 
     document.getElementById("about_dialog").style.display = "none"; 
+    $("#n_Balls").val(60);
+    $("#gameTime").val(80);
+    $("#n_Monsters").val(2);
   </script>
 
 <script type="text/javascript">
+  function topFunction() {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }
   function show_login() {
     document.getElementById("welcome").style.display = "none";
     document.getElementById("game").style.display = "none";
@@ -130,7 +162,10 @@
     document.getElementById("setting").style.display = "none";
     document.getElementById("form_page").style.display = "block";
     document.getElementById("sign_in").style.display = "block";
+    document.getElementById("head_logo").style.display = "block";
+
     document.getElementById("canvas").style.display = "none";
+    stopGame();
   }
   function show_welcome() {
     document.getElementById("form_page").style.display = "none";
@@ -139,6 +174,9 @@
     document.getElementById("welcome").style.display = "block";
     document.getElementById("setting").style.display = "none";
     document.getElementById("canvas").style.display = "none";
+    document.getElementById("head_logo").style.display = "block";
+
+    stopGame();
   }
   function show_Register() {
     document.getElementById("welcome").style.display = "none";
@@ -150,6 +188,9 @@
     document.getElementById("sign_in").style.display = "none";
     document.getElementById("form_page").style.display = "block";
     document.getElementById("sign_up").style.display = "block";
+    document.getElementById("head_logo").style.display = "block";
+
+    stopGame();
   }
 
   function show_Setting() {
@@ -166,7 +207,6 @@
 		document.getElementById("form_page").style.display = "none";
 		document.getElementById("about_dialog").style.display = "none";
     document.getElementById("setting").style.display = "none";
-
 		document.getElementById("game").style.display = "block";
 	}
 

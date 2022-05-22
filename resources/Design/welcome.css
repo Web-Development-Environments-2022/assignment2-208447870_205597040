@@ -10,4 +10,15 @@
 .stop-scrolling {
     height: 100%;
     overflow: hidden;
-  }
+}
+
+.settings {
+    width: 430px;
+    height: 375px;
+    font-size: 16px;
+    font-weight: 300;
+    padding-left: 35px;
+    padding-right: 35px;
+    padding-top: 55px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}

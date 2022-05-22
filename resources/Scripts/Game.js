@@ -1,13 +1,35 @@
-var startAudio = new Audio("resources/Audio/Intro.mp3");
+var startAudio = new Audio("resources/Audio/Background Music.mp3");
 var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
 var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
 var winAudio = new Audio("resources/Audio/WIN sound.mp3");
-// var monsterAudio = new Audio("resources/Audio/OUCH Monster.mp3");
+
+
 
 $(document).ready(function() {
     context = canvas.getContext("2d");
-})
+    num_of_balls = $("#n_Balls").val();
+    game_time = $("#gameTime").val();
+    ghosts_num = $("#n_Monsters").val();
+    game_time = parseInt(game_time);
+    ghosts_num = parseInt(ghosts_num);
+    num_of_balls = parseInt(num_of_balls);
 
+    if(game_time > 180 || game_time < 60){
+        game_time=100;
+        $("#gameTime").val(100);
+    }
+    if(ghosts_num > 4 || ghosts_num < 1){
+        ghosts_num = 2;
+        $("#n_Monsters").val(2);
+    }
+    if(num_of_balls > 90 || num_of_balls < 50){
+        num_of_balls = 60;
+        $("#n_Balls").val(60);
+    }
+})
+var num_of_balls;
+var game_time;
+var ghosts_num;
 var context;// = canvas.getContext("2d");
 var score;
 var start_time;
@@ -18,22 +40,21 @@ var intervalGhosts;
 var intervalPill;
 var m_TargetScore = 0;
 
-var Monster = new Object();
+
 var m_PillPrevPosition=new Object(); //curernt Position of Pill
 var m_ClockPrevPosition=new Object(); //curernt Position of Clock
 m_PillPrevPosition.i = 500;
 m_PillPrevPosition.j = 500;
 m_ClockPrevPosition.i = 600;
 m_ClockPrevPosition.j = 600;
-Monster.i = 800;
-Monster.j = 800;
 
 
 var board;
 //random
-var m_GhostNum = 4;
+var m_GhostNum;
+// var m_GhostNum = 4;
 var m_TotalBalls;
-var m_MaxTime = 180;
+var m_MaxTime; //= 180;
 var m_PacDirection = 4;
 
 var m_PacmanPosition = new Object();
@@ -41,17 +62,16 @@ var FirstGhostPosition = new Object(); //Position of First Ghost
 var SecondGhostPosition = new Object(); //Position of Second Ghost
 var ThirdGhostPosition = new Object(); //Position of Third Ghost
 var FourthGhostPosition = new Object(); //Position of Fourth Ghost
-var bonus_pos = new Object();
-var special_pos = new Object();
+
 var m_special;
+var pillEaten;
+var timeoutPill 
 
 var m_livesUser;
 var m_TimesCatched;
-var board;
 var m_GameScore;
 var m_PacColor="yellow";
 var m_StartTime;
-var time_elapsed;
 var interval;
 var m_PlayerName;
 
@@ -65,12 +85,22 @@ var m_GameWon = false;
 var m_GameOver = false;
 
 function Start() {
-    $('body').addClass('stop-scrolling')
 
-    m_PlayerName = loginUsernameEntry;
+    $('body').addClass('stop-scrolling')
+    topFunction();
+    
+    time_elapsed = new Date();
     loserAudio.pause();
     show_game();
+    startAudio.load();
     startAudio.play();
+
+    m_MaxTime = parseInt($("#gameTime").val());
+    m_TotalBalls = parseInt($("#n_Balls").val());
+    m_GhostNum = parseInt($("#n_Monsters").val());
+    m_PlayerName = loginUsernameEntry;
+
+
     board = [
         [4, 4, 4, 4, 4, 4, 4, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4],
         [4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4],
@@ -92,8 +122,8 @@ function Start() {
         [4, 4, 4, 4, 4, 4, 4, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4]
     ]
     document.getElementById("start_game").style.display = "none";
+    document.getElementById("start_game_settings").style.display = "none";
     document.getElementById("head_logo").style.display = "none";
-
     document.getElementById("canvas").style.display = "block";
     m_GameScore = 0;
     m_TimesCatched = 0
@@ -104,6 +134,7 @@ function Start() {
     m_livesUser = 5;
     m_StartTime = new Date();
     m_special = 1;
+    pillEaten = false;
 
     //Ghosts start in corners
     FirstGhostPosition.i = 1;
@@ -143,9 +174,8 @@ function Start() {
     food_remain = tempRed + tempGreen + tempDragon;
     
     score = 0;
-    pac_color="yellow";
+    m_PacColor="yellow";
     var cnt = 289;
-    var pacman_remain = 1;
     start_time= new Date();
 
     for (var i = 0; i < 18; i++) { //18 is the number of rows and columns
@@ -215,7 +245,6 @@ function Start() {
     intervalGame = setInterval(UpdatePosition, 150);
     intervalGhosts = setInterval(UpdatePositionGhosts, 600);
     intervalPill = setInterval(PutPillsOnMap, 10000);
-//     intervalPill = setInterval(PutMonsterOnMap, 10000);
     intervalClock = setInterval(PutClockOnMap, 16000);
 }
 
@@ -234,29 +263,20 @@ function findRandomEmptyCell(board) {
 }
 
 function PutPillsOnMap(){
-
+    pillEaten = false;
     emptyCell = findRandomEmptyCell(board);
     board[emptyCell[0]][emptyCell[1]]=11; //pill
     m_PillPrevPosition.i = emptyCell[0];
     m_PillPrevPosition.j = emptyCell[1];
-    var pillTimeout = setTimeout(()=> {
-        board[m_PillPrevPosition.i][m_PillPrevPosition.j]=0; //pill
-        m_PillPrevPosition.i = -1;
-        m_PillPrevPosition.j = -1;
+    timeoutPill = setTimeout(()=> {
+        console.log("Clearing Pill from "+m_PillPrevPosition.i+","+m_PillPrevPosition.j);
+        if(!pillEaten)
+            board[m_PillPrevPosition.i][m_PillPrevPosition.j]=0; //pill
+        // m_PillPrevPosition.i = -1;
+        // m_PillPrevPosition.j = -1;
     }, 5000);
 }
-function PutMonsterOnMap(){
 
-    emptyCell = findRandomEmptyCell(board);
-    board[emptyCell[0]][emptyCell[1]]=13; //monster
-    Monster.i = emptyCell[0];
-    Monster.j = emptyCell[1];
-    var pillTimeout = setTimeout(()=> {
-        board[Monster.i][Monster.j]=0; //monster
-        Monster.i = -1;
-        Monster.j = -1;
-    }, 5000);
-}
 function PutClockOnMap(){
     if(m_ClockPrevPosition.i != 600){
         board[m_ClockPrevPosition.i][m_ClockPrevPosition.j]=0;
@@ -286,9 +306,10 @@ function Randomize() {
     m_GhostNum = getRandomIntInclusive(1,4);
     m_TotalBalls = Math.floor(Math.random() * 51) + 40;
     m_MaxTime = 60 + Math.floor(Math.random() * 150);
-    document.getElementById("TimeFrame").value = m_MaxTime;
-    document.getElementById("Balls").value = m_TotalBalls;
-    document.getElementById("Monsters").value = m_GhostNum;
+
+    $("#n_Balls").val(m_TotalBalls);
+    $("#gameTime").val(m_MaxTime);
+    $("#n_Monsters").val(m_GhostNum);
 }
 
 function getRandomIntInclusive(min, max) {
@@ -299,7 +320,9 @@ function getRandomIntInclusive(min, max) {
 
 function Draw() {
     canvas.width=canvas.width; //clean board
-    
+    if(time_elapsed > 90){
+        startAudio.play();
+    }
     lblScore.value = m_GameScore;
     lblTime.value = m_MaxTime-time_elapsed;
     
@@ -365,20 +388,18 @@ function Draw() {
                 }
             }
             else if (board[i][j] === 7) {
-                context.beginPath();
-                context.arc(center.x, center.y, 10, 0, 2 * Math.PI); // circle
-                context.fillStyle = "red"; //color 
-                context.fill();
+                base_image = new Image();
+                base_image.src = "resources/images/RedBall.png";
+                context.drawImage(base_image, center.x-10, center.y-10, 20, 20);
             } else if (board[i][j] === 8) {
-                context.beginPath();
-                context.arc(center.x, center.y, 10, 0, 2 * Math.PI); // circle
-                context.fillStyle = "green"; //color 
-                context.fill();
+
+                base_image = new Image();
+                base_image.src = "resources/images/GreenBall.png";
+                context.drawImage(base_image, center.x-10, center.y-10, 20, 20);
             } else if (board[i][j] === 9) {
-                context.beginPath();
-                context.arc(center.x, center.y, 10, 0, 2 * Math.PI); // circle
-                context.fillStyle = "orange"; //color 
-                context.fill();
+                base_image = new Image();
+                base_image.src = "resources/images/Dragonball.png";
+                context.drawImage(base_image, center.x-10, center.y-10, 20, 20);
             }
             //draw Ghost1
             else if (board[i][j] === 3) {
@@ -389,43 +410,37 @@ function Draw() {
             //draw Wall
             else if (board[i][j] === 4 ) {
                 base_image = new Image();
-                base_image.src = "resources/images/wall7.png";
+                base_image.src = "resources/Images/wall7.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost2
             else if (board[i][j] === 5 && m_GhostNum > 1) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost2.png";
+                base_image.src = "resources/Images/ghost2.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost3
             else if (board[i][j] === 6 && m_GhostNum > 2) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost3.png";
+                base_image.src = "resources/Images/ghost3.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             //draw Ghost4
             else if (board[i][j] === 10 && m_GhostNum > 3) {
                 base_image = new Image();
-                base_image.src = "resources/images/ghost4.png";
+                base_image.src = "resources/Images/ghost4.png";
                 context.drawImage(base_image, center.x - 20, center.y - 20, 40, 40);
             }
             else if (board[i][j] === 11) {
                 base_image = new Image();
-                base_image.src = "resources/images/Pill.jpg";
+                base_image.src = "resources/Images/Pill.jpg";
                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
             else if (board[i][j] === 12) {
                 base_image = new Image();
-                base_image.src = "resources/images/ClockPeterPan.jpg";
-                context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
+                    base_image.src = "resources/Images/ClockPeterPan.jpg";
+                    context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
-//             else if (board[i][j] === 13) {
-//                 base_image = new Image();
-//                 base_image.src = "resources/images/monster.jpg";
-//                 context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
-//             }
-            
         }
     }        
 }
@@ -498,37 +513,30 @@ function UpdatePosition() {
     time_elapsed=(currentTime-start_time)/1000;
 
     if(m_PacmanPosition.i === m_PillPrevPosition.i && m_PacmanPosition.j === m_PillPrevPosition.j){
-        m_livesUser++;
+        if(m_livesUser < 5){
+            m_livesUser++;
+        }
         m_PillPrevPosition.i=-1;
         m_PillPrevPosition.j=-1;
+        pillEaten = true;
+        clearTimeout(timeoutPill);
     }
-
-    
 
     if(m_PacmanPosition.i === m_ClockPrevPosition.i && m_PacmanPosition.j === m_ClockPrevPosition.j){
         m_MaxTime=m_MaxTime+10;
-        m_ClockPrevPosition.i=-1;
-        m_ClockPrevPosition.j=-1;
+        // m_ClockPrevPosition.i=-1;
+        // m_ClockPrevPosition.j=-1;
     }
 
-    if ((m_PacmanPosition.i === Monster.i && m_PacmanPosition.j === Monster.j) ||(m_PacmanPosition.i === FirstGhostPosition.i && m_PacmanPosition.j === FirstGhostPosition.j) || (m_PacmanPosition.i === SecondGhostPosition.i && m_PacmanPosition.j === SecondGhostPosition.j) || ((m_PacmanPosition.i == ThirdGhostPosition.i && m_PacmanPosition.j == ThirdGhostPosition.j) || ((m_PacmanPosition.i == FourthGhostPosition.i && m_PacmanPosition.j == FourthGhostPosition.j)))) {
-        
-        if(m_PacmanPosition.i === Monster.i && m_PacmanPosition.j === Monster.j){
-            m_livesUser--;
-            monsterAudio.play();
-        }    
-        else{
-            hurtAudio.play();
-        }
-        Monster.i=-1;
-        Monster.j=-1;
 
+    if ((m_PacmanPosition.i === FirstGhostPosition.i && m_PacmanPosition.j === FirstGhostPosition.j) || (m_PacmanPosition.i === SecondGhostPosition.i && m_PacmanPosition.j === SecondGhostPosition.j) || ((m_PacmanPosition.i == ThirdGhostPosition.i && m_PacmanPosition.j == ThirdGhostPosition.j) || ((m_PacmanPosition.i == FourthGhostPosition.i && m_PacmanPosition.j == FourthGhostPosition.j)))) {
+        hurtAudio.play();
         board[m_PacmanPosition.i][m_PacmanPosition.j] = 0;
         board[FirstGhostPosition.i][FirstGhostPosition.j] = FirstGhostPosition.prev;
         FirstGhostPosition.i = 1;
         FirstGhostPosition.j = 1;
-        
         board[FirstGhostPosition.i][FirstGhostPosition.j] = 3;
+        
         FirstGhostPosition.prev = 0;
 
         if(m_GhostNum > 1){
@@ -566,34 +574,33 @@ function UpdatePosition() {
         m_PacmanPosition.i = emptyCell[0];
         m_PacmanPosition.j = emptyCell[1];
         board[m_PacmanPosition.i][m_PacmanPosition.j]=2;
-        if (m_livesUser === 0 || (currentTime-start_time<=m_MaxTime)) {
-            window.clearInterval(intervalClock);
-            window.clearInterval(intervalGame);
-            window.clearInterval(intervalGhosts);
-            window.clearInterval(intervalPill);
-            window.alert("Loser!!!");
-            m_GameOver = true;
-            loserAudio.play();
-            document.getElementById("canvas").style.display = "none";
-            document.getElementById("start_game").style.display = "block";
-        }
+       
+    }
+    if (m_livesUser === 0 || (time_elapsed >= m_MaxTime)) {
+        stopGame();
+        loserAudio.play();
+        window.alert("Loser!!!");
     }
     if (m_GameScore === m_TargetScore) {
-        window.clearInterval(intervalClock);
-        window.clearInterval(intervalGame);
-        window.clearInterval(intervalGhosts);
-        window.clearInterval(intervalPill);
-        window.alert("Winner!!!");
-        m_GameWon = true;
         m_TargetScore = 0;
+        stopGame();
         winAudio.play();
-        document.getElementById("canvas").style.display = "none";
-        document.getElementById("start_game").style.display = "block";
+        window.alert("Winner!!!");
     }
     else{
         Draw();
     }
 }
+function stopGame() {
+    startAudio.pause();
+    window.clearInterval(intervalClock);
+    window.clearInterval(intervalGame);
+    window.clearInterval(intervalGhosts);
+    window.clearInterval(intervalPill);
+    document.getElementById("canvas").style.display = "none";
+    document.getElementById("start_game").style.display = "block";
+}
+
 
 function GhostMovement(GhostPosition) {
     //anyway

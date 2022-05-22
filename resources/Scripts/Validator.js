@@ -8,9 +8,11 @@ const data_base = [
 	}
 ];
 var loginUsernameEntry;
+
 // Look at console
 $(document).ready(function() {
 	var Exist;
+
   
 	$('#login_button').on('click', function() {
 		loginUsernameEntry = $("#login_username").val();
