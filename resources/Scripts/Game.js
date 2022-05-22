@@ -405,16 +405,16 @@ function Draw() {
             }
             else if (board[i][j] === 7) {
                 base_image = new Image();
-                base_image.src = "resources/images/RedBall.png";
+                base_image.src = "resources/Images/RedBall.png";
                 context.drawImage(base_image, center.x-10, center.y-10, 20, 20);
             } else if (board[i][j] === 8) {
 
                 base_image = new Image();
-                base_image.src = "resources/images/GreenBall.png";
+                base_image.src = "resources/Images/GreenBall.png";
                 context.drawImage(base_image, center.x-10, center.y-10, 20, 20);
             } else if (board[i][j] === 9) {
                 base_image = new Image();
-                base_image.src = "resources/images/Dragonball.png";
+                base_image.src = "resources/Images/Dragonball.png";
                 context.drawImage(base_image, center.x-10, center.y-10, 20, 20);
             }
             //draw Ghost1
