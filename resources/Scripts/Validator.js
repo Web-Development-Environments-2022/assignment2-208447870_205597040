@@ -162,6 +162,8 @@ $(document).ready(function() {
 		document.getElementById("welcome").style.display = "none";
 		document.getElementById("canvas").style.display = "none";
 		document.getElementById("setting").style.display = "block";
+		document.getElementById("start_game_settings").style.display = "block";
+
 		Randomize();
 	  }
   

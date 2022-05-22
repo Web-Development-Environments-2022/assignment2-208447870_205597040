@@ -3,8 +3,6 @@ var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
 var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
 var winAudio = new Audio("resources/Audio/WIN sound.mp3");
 
-
-
 $(document).ready(function() {
     context = canvas.getContext("2d");
     num_of_balls = $("#n_Balls").val();
@@ -43,6 +41,10 @@ var m_TargetScore = 0;
 
 var m_PillPrevPosition=new Object(); //curernt Position of Pill
 var m_ClockPrevPosition=new Object(); //curernt Position of Clock
+var m_Bonus=new Object(); //curernt Position of Clock
+m_Bonus.num = 13;
+var bonus_eaten;
+
 m_PillPrevPosition.i = 500;
 m_PillPrevPosition.j = 500;
 m_ClockPrevPosition.i = 600;
@@ -65,7 +67,9 @@ var FourthGhostPosition = new Object(); //Position of Fourth Ghost
 
 var m_special;
 var pillEaten;
-var timeoutPill 
+var timeoutPill;
+var timeoutClock;
+var clockEaten;
 
 var m_livesUser;
 var m_TimesCatched;
@@ -99,6 +103,8 @@ function Start() {
     m_TotalBalls = parseInt($("#n_Balls").val());
     m_GhostNum = parseInt($("#n_Monsters").val());
     m_PlayerName = loginUsernameEntry;
+
+    
 
 
     board = [
@@ -135,6 +141,14 @@ function Start() {
     m_StartTime = new Date();
     m_special = 1;
     pillEaten = false;
+    bonus_eaten = false;
+    clockEaten = false;
+
+    emptyCellbonus = findRandomEmptyCell(board);
+    m_Bonus.i = emptyCellbonus[0];
+    m_Bonus.j = emptyCellbonus[1];
+    board[m_Bonus.i][m_Bonus.j]=13;
+    m_Bonus.prev = 0;
 
     //Ghosts start in corners
     FirstGhostPosition.i = 1;
@@ -278,13 +292,15 @@ function PutPillsOnMap(){
 }
 
 function PutClockOnMap(){
-    if(m_ClockPrevPosition.i != 600){
-        board[m_ClockPrevPosition.i][m_ClockPrevPosition.j]=0;
-    }
+    clockEaten = false;
     emptyCell = findRandomEmptyCell(board);
-    board[emptyCell[0]][emptyCell[1]]=12; //pill
+    board[emptyCell[0]][emptyCell[1]]=12; //clock
     m_ClockPrevPosition.i = emptyCell[0];
     m_ClockPrevPosition.j = emptyCell[1];
+    timeoutClock = setTimeout(()=> {
+        if(!clockEaten)
+            board[m_ClockPrevPosition.i][m_ClockPrevPosition.j]=0; //clock
+    }, 5000);
 }
 
 function GetKeyPressed() {
@@ -304,7 +320,7 @@ function GetKeyPressed() {
 //Allow the user to enter random game values
 function Randomize() {
     m_GhostNum = getRandomIntInclusive(1,4);
-    m_TotalBalls = Math.floor(Math.random() * 51) + 40;
+    m_TotalBalls = Math.floor(Math.random() * 41) + 50;
     m_MaxTime = 60 + Math.floor(Math.random() * 150);
 
     $("#n_Balls").val(m_TotalBalls);
@@ -441,6 +457,11 @@ function Draw() {
                     base_image.src = "resources/Images/ClockPeterPan.jpg";
                     context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
             }
+            else if (board[i][j] === 13) {
+                base_image = new Image();
+                base_image.src = "resources/Images/bonus.png";
+                context.drawImage(base_image, center.x-20, center.y-20, 40, 40);
+            }
         }
     }        
 }
@@ -468,6 +489,9 @@ function UpdatePositionGhosts() {
 }
 
 function UpdatePosition() {
+    if(!bonus_eaten){
+        BonusMovement();
+    }
     board[m_PacmanPosition.i][m_PacmanPosition.j]=0;
     var x = GetKeyPressed()
     if (x == 1) {
@@ -524,8 +548,18 @@ function UpdatePosition() {
 
     if(m_PacmanPosition.i === m_ClockPrevPosition.i && m_PacmanPosition.j === m_ClockPrevPosition.j){
         m_MaxTime=m_MaxTime+10;
-        // m_ClockPrevPosition.i=-1;
-        // m_ClockPrevPosition.j=-1;
+        m_ClockPrevPosition.i=-1;
+        m_ClockPrevPosition.j=-1;
+        clockEaten=true;
+        clearTimeout(timeoutClock);
+    }
+
+    if(m_PacmanPosition.i === m_Bonus.i && m_PacmanPosition.j === m_Bonus.j){
+        m_Bonus.i=-1;
+        m_Bonus.j=-1;
+        m_Bonus.prev = 0;
+        m_GameScore = m_GameScore + 50;
+        bonus_eaten = true;
     }
 
 
@@ -574,6 +608,13 @@ function UpdatePosition() {
         m_PacmanPosition.i = emptyCell[0];
         m_PacmanPosition.j = emptyCell[1];
         board[m_PacmanPosition.i][m_PacmanPosition.j]=2;
+
+        board[m_Bonus.i][m_Bonus.j] = m_Bonus.prev;
+        emptyCellbonus = findRandomEmptyCell(board);
+        m_Bonus.i = emptyCellbonus[0];
+        m_Bonus.j = emptyCellbonus[1];
+        board[m_Bonus.i][m_Bonus.j]=13;
+        m_Bonus.prev = 0;
        
     }
     if (m_livesUser === 0 || (time_elapsed >= m_MaxTime)) {
@@ -581,7 +622,7 @@ function UpdatePosition() {
         loserAudio.play();
         window.alert("Loser!!!");
     }
-    if (m_GameScore === m_TargetScore) {
+    if (m_GameScore >= m_TargetScore) {
         m_TargetScore = 0;
         stopGame();
         winAudio.play();
@@ -600,6 +641,46 @@ function stopGame() {
     document.getElementById("canvas").style.display = "none";
     document.getElementById("start_game").style.display = "block";
 }
+function BonusMovement() {
+    board[m_Bonus.i][m_Bonus.j] = m_Bonus.prev;
+    var success = false;
+    while(!success){
+        var bonus_move = Math.floor(Math.random() * 5);
+        b_move = bonus_move;
+        if(b_move===1){
+            if(board[m_Bonus.i + 1][m_Bonus.j] !== 3 && board[m_Bonus.i + 1][m_Bonus.j] !== 4 && board[m_Bonus.i + 1][m_Bonus.j] !== 5 && board[m_Bonus.i + 1][m_Bonus.j] !== 6 && board[m_Bonus.i + 1][m_Bonus.j] !== 10){
+                m_Bonus.prev = board[m_Bonus.i+1][m_Bonus.j];
+                board[m_Bonus.i+1][m_Bonus.j] = m_Bonus.num;
+                m_Bonus.i++;
+                success=true;
+            }
+        }
+        else if(b_move===2){
+            if( board[m_Bonus.i][m_Bonus.j + 1] !== 3 && board[m_Bonus.i][m_Bonus.j + 1] !== 4 && board[m_Bonus.i][m_Bonus.j + 1] !== 5 && board[m_Bonus.i][m_Bonus.j + 1] !== 6 && board[m_Bonus.i][m_Bonus.j + 1] !== 10){
+                m_Bonus.prev = board[m_Bonus.i][m_Bonus.j+1];
+                board[m_Bonus.i][m_Bonus.j+1] = m_Bonus.num;
+                m_Bonus.j++;
+                success=true;
+            }
+        }
+        else if(b_move===3){
+            if(board[m_Bonus.i-1][m_Bonus.j] !== 3 && board[m_Bonus.i - 1][m_Bonus.j] !== 4 && board[m_Bonus.i - 1][m_Bonus.j] !== 5 && board[m_Bonus.i-1][m_Bonus.j] !== 6 && board[m_Bonus.i-1][m_Bonus.j] !== 10){
+                m_Bonus.prev = board[m_Bonus.i-1][m_Bonus.j];
+                board[m_Bonus.i-1][m_Bonus.j] = m_Bonus.num;
+                m_Bonus.i--;
+                success=true;
+            }
+        }
+        else if(b_move===4){
+            if(board[m_Bonus.i][m_Bonus.j - 1] !== 3 && board[m_Bonus.i][m_Bonus.j - 1] !== 4 && board[m_Bonus.i][m_Bonus.j - 1] !== 5 && board[m_Bonus.i][m_Bonus.j - 1] !== 6 && board[m_Bonus.i][m_Bonus.j - 1] !== 10){
+                m_Bonus.prev = board[m_Bonus.i][m_Bonus.j-1];
+                board[m_Bonus.i][m_Bonus.j-1] = m_Bonus.num;
+                m_Bonus.j--;
+                success=true;
+            }
+        }
+    }
+}
 
 
 function GhostMovement(GhostPosition) {
@@ -609,43 +690,43 @@ function GhostMovement(GhostPosition) {
         board[GhostPosition.i][GhostPosition.j] = 0;
     }
     //movment
-    if(m_PacmanPosition.i > GhostPosition.i  && board[GhostPosition.i + 1][GhostPosition.j] !== 3 && board[GhostPosition.i + 1][GhostPosition.j] !== 4 && board[GhostPosition.i + 1][GhostPosition.j] !== 5 && board[GhostPosition.i + 1][GhostPosition.j] !== 6 && board[GhostPosition.i + 1][GhostPosition.j] !== 10){
+    if(m_PacmanPosition.i > GhostPosition.i && board[GhostPosition.i + 1][GhostPosition.j] !== 13 && board[GhostPosition.i + 1][GhostPosition.j] !== 3 && board[GhostPosition.i + 1][GhostPosition.j] !== 4 && board[GhostPosition.i + 1][GhostPosition.j] !== 5 && board[GhostPosition.i + 1][GhostPosition.j] !== 6 && board[GhostPosition.i + 1][GhostPosition.j] !== 10){
         GhostPosition.prev = board[GhostPosition.i+1][GhostPosition.j];
         board[GhostPosition.i+1][GhostPosition.j] = GhostPosition.num;
         GhostPosition.i++;
     }
-    else if(m_PacmanPosition.j > GhostPosition.j && board[GhostPosition.i][GhostPosition.j + 1] !== 3 && board[GhostPosition.i][GhostPosition.j + 1] !== 4 && board[GhostPosition.i][GhostPosition.j + 1] !== 5 && board[GhostPosition.i][GhostPosition.j + 1] !== 6 && board[GhostPosition.i][GhostPosition.j + 1] !== 10){
+    else if(m_PacmanPosition.j > GhostPosition.j&& board[GhostPosition.i][GhostPosition.j + 1] !== 13 && board[GhostPosition.i][GhostPosition.j + 1] !== 3 && board[GhostPosition.i][GhostPosition.j + 1] !== 4 && board[GhostPosition.i][GhostPosition.j + 1] !== 5 && board[GhostPosition.i][GhostPosition.j + 1] !== 6 && board[GhostPosition.i][GhostPosition.j + 1] !== 10){
         GhostPosition.prev = board[GhostPosition.i][GhostPosition.j+1];
         board[GhostPosition.i][GhostPosition.j+1] = GhostPosition.num;
         GhostPosition.j++;
     }
-    else if(m_PacmanPosition.i < GhostPosition.i && board[GhostPosition.i-1][GhostPosition.j] !== 3 && board[GhostPosition.i-1][GhostPosition.j] !== 4 && board[GhostPosition.i-1][GhostPosition.j] !== 5 && board[GhostPosition.i-1][GhostPosition.j] !== 6 && board[GhostPosition.i-1][GhostPosition.j] !== 10){
+    else if(m_PacmanPosition.i < GhostPosition.i&& board[GhostPosition.i - 1][GhostPosition.j] !== 13 && board[GhostPosition.i - 1][GhostPosition.j] !== 3 && board[GhostPosition.i-1][GhostPosition.j] !== 4 && board[GhostPosition.i-1][GhostPosition.j] !== 5 && board[GhostPosition.i-1][GhostPosition.j] !== 6 && board[GhostPosition.i-1][GhostPosition.j] !== 10){
         GhostPosition.prev = board[GhostPosition.i-1][GhostPosition.j];
         board[GhostPosition.i-1][GhostPosition.j] = GhostPosition.num;
         GhostPosition.i--;
     }
-    else if(m_PacmanPosition.j < GhostPosition.j && board[GhostPosition.i][GhostPosition.j - 1] !== 3 && board[GhostPosition.i][GhostPosition.j - 1] !== 4 && board[GhostPosition.i][GhostPosition.j - 1] !== 5 && board[GhostPosition.i][GhostPosition.j - 1] !== 6 && board[GhostPosition.i][GhostPosition.j - 1] !== 10){
+    else if(m_PacmanPosition.j < GhostPosition.j&& board[GhostPosition.i][GhostPosition.j - 1] !== 13 && board[GhostPosition.i][GhostPosition.j - 1] !== 3 && board[GhostPosition.i][GhostPosition.j - 1] !== 4 && board[GhostPosition.i][GhostPosition.j - 1] !== 5 && board[GhostPosition.i][GhostPosition.j - 1] !== 6 && board[GhostPosition.i][GhostPosition.j - 1] !== 10){
         GhostPosition.prev = board[GhostPosition.i][GhostPosition.j-1];
         board[GhostPosition.i][GhostPosition.j-1] = GhostPosition.num;
         GhostPosition.j--;
     }
     else{
-        if(board[GhostPosition.i + 1][GhostPosition.j] !== 3 && board[GhostPosition.i + 1][GhostPosition.j] !== 4 && board[GhostPosition.i + 1][GhostPosition.j] !== 5 && board[GhostPosition.i + 1][GhostPosition.j] !== 6 && board[GhostPosition.i + 1][GhostPosition.j] !== 10){
+        if(board[GhostPosition.i + 1][GhostPosition.j] !== 13 && board[GhostPosition.i + 1][GhostPosition.j] !== 3 && board[GhostPosition.i + 1][GhostPosition.j] !== 4 && board[GhostPosition.i + 1][GhostPosition.j] !== 5 && board[GhostPosition.i + 1][GhostPosition.j] !== 6 && board[GhostPosition.i + 1][GhostPosition.j] !== 10){
             GhostPosition.prev = board[GhostPosition.i+1][GhostPosition.j];
             board[GhostPosition.i+1][GhostPosition.j] = GhostPosition.num;
             GhostPosition.i++;
         }
-        else if( board[GhostPosition.i][GhostPosition.j + 1] !== 3 && board[GhostPosition.i][GhostPosition.j + 1] !== 4 && board[GhostPosition.i][GhostPosition.j + 1] !== 5 && board[GhostPosition.i][GhostPosition.j + 1] !== 6 && board[GhostPosition.i][GhostPosition.j + 1] !== 10){
+        else if( board[GhostPosition.i][GhostPosition.j + 1] !== 13 && board[GhostPosition.i][GhostPosition.j + 1] !== 3 && board[GhostPosition.i][GhostPosition.j + 1] !== 4 && board[GhostPosition.i][GhostPosition.j + 1] !== 5 && board[GhostPosition.i][GhostPosition.j + 1] !== 6 && board[GhostPosition.i][GhostPosition.j + 1] !== 10){
             GhostPosition.prev = board[GhostPosition.i][GhostPosition.j+1];
             board[GhostPosition.i][GhostPosition.j+1] = GhostPosition.num;
             GhostPosition.j++;
         }
-        else if(board[GhostPosition.i-1][GhostPosition.j] !== 3 && board[GhostPosition.i - 1][GhostPosition.j] !== 4 && board[GhostPosition.i - 1][GhostPosition.j] !== 5 && board[GhostPosition.i-1][GhostPosition.j] !== 6 && board[GhostPosition.i-1][GhostPosition.j] !== 10){
+        else if(board[GhostPosition.i - 1][GhostPosition.j] !== 13 && board[GhostPosition.i - 1][GhostPosition.j] !== 3 && board[GhostPosition.i - 1][GhostPosition.j] !== 4 && board[GhostPosition.i - 1][GhostPosition.j] !== 5 && board[GhostPosition.i-1][GhostPosition.j] !== 6 && board[GhostPosition.i-1][GhostPosition.j] !== 10){
             GhostPosition.prev = board[GhostPosition.i-1][GhostPosition.j];
             board[GhostPosition.i-1][GhostPosition.j] = GhostPosition.num;
             GhostPosition.i--;
         }
-        else if(board[GhostPosition.i][GhostPosition.j - 1] !== 3 && board[GhostPosition.i][GhostPosition.j - 1] !== 4 && board[GhostPosition.i][GhostPosition.j - 1] !== 5 && board[GhostPosition.i][GhostPosition.j - 1] !== 6 && board[GhostPosition.i][GhostPosition.j - 1] !== 10){
+        else if(board[GhostPosition.i][GhostPosition.j - 1] !== 13 && board[GhostPosition.i][GhostPosition.j - 1] !== 3 && board[GhostPosition.i][GhostPosition.j - 1] !== 4 && board[GhostPosition.i][GhostPosition.j - 1] !== 5 && board[GhostPosition.i][GhostPosition.j - 1] !== 6 && board[GhostPosition.i][GhostPosition.j - 1] !== 10){
             GhostPosition.prev = board[GhostPosition.i][GhostPosition.j-1];
             board[GhostPosition.i][GhostPosition.j-1] = GhostPosition.num;
             GhostPosition.j--;
