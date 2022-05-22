@@ -1,5 +1,5 @@
 var startAudio = new Audio("resources/Audio/Background Music.mp3");
-var loserAudio = new Audio("resources/Audio/Naruto sadness and sorrow.mp3");
+var loserAudio = new Audio("resources/Audio/Lose sound.mp3");
 var hurtAudio = new Audio("resources/Audio/Ow_Sound.mp3");
 var winAudio = new Audio("resources/Audio/WIN sound.mp3");
 
